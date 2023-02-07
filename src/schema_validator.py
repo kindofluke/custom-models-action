@@ -208,7 +208,7 @@ class ModelSchema(SharedSchema):
     TARGET_TYPE_BINARY_KEY = "Binary"
     TARGET_TYPE_REGRESSION_KEY = "Regression"
     TARGET_TYPE_MULTICLASS_KEY = "Multiclass"
-    TARGET_TYPE_ANOMALY_DETECTION_KEY = "Anomaly Detection"
+    TARGET_TYPE_ANOMALY_DETECTION_KEY = "Anomaly"
     TARGET_TYPE_UNSTRUCTURED_BINARY_KEY = "Unstructured (Binary)"
     TARGET_TYPE_UNSTRUCTURED_REGRESSION_KEY = "Unstructured (Regression)"
     TARGET_TYPE_UNSTRUCTURED_MULTICLASS_KEY = "Unstructured (Multiclass)"
