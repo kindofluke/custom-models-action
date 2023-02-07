@@ -39,6 +39,7 @@ class DrClient:
     CUSTOM_MODEL_ROUTE = CUSTOM_MODELS_ROUTE + "{model_id}/"
     CUSTOM_MODELS_VERSIONS_ROUTE = CUSTOM_MODEL_ROUTE + "versions/"
     CUSTOM_MODELS_VERSION_ROUTE = CUSTOM_MODEL_ROUTE + "versions/{model_ver_id}/"
+    CUSTOM_MODELS_VERSION_PREDICTION_EXPLANATION_ROUTE = CUSTOM_MODEL_ROUTE + "versions/{model_ver_id}/predictionExplanationsInitialization/"
     CUSTOM_MODELS_VERSION_DEPENDENCY_BUILD_ROUTE = CUSTOM_MODELS_VERSION_ROUTE + "dependencyBuild/"
     CUSTOM_MODELS_VERSION_DEPENDENCY_BUILD_LOG_ROUTE = (
         CUSTOM_MODELS_VERSION_ROUTE + "dependencyBuildLog/"
@@ -1047,6 +1048,21 @@ class DrClient:
                 code=response.status_code,
             )
         return response.json()
+    
+    def _intialize_prediction_explanations_for_model(self, custom_model_id, custom_model_version_id):
+        url = self.CUSTOM_MODELS_VERSION_PREDICTION_EXPLANATION_ROUTE.format(
+            model_id=custom_model_id, model_ver_id=custom_model_version_id
+        )
+        response = self._http_requester.post(url)
+        if response.status_code != 202:
+            print(DataRobotClientError(
+                "Failed creating predition explanations from custom model version. "
+                f"custom model version id: {custom_model_version_id}, "
+                f"Response status: {response.status_code}, "
+                f"Response body: {response.text}",
+                code=response.status_code,
+            ))
+        return response.json()
 
     def _create_deployment_from_model_package(self, model_package, deployment_info):
         label = deployment_info.get_settings_value(DeploymentSchema.LABEL_KEY)
@@ -1463,7 +1479,7 @@ class DrClient:
 
         return self._paginated_fetch(url)
 
-    def replace_model_deployment(self, custom_model_version, datarobot_deployment):
+    def replace_model_deployment(self, custom_model_id,  custom_model_version, datarobot_deployment):
         """
         Replace a custom model version in a given deployment in DataRobot.
 
@@ -1479,7 +1495,9 @@ class DrClient:
         dict,
             A DataRobot deployment, in which the model was replaced.
         """
-
+        print(custom_model_version)
+        print("THE VERSION HERE")
+        self._intialize_prediction_explanations_for_model(custom_model_id=custom_model_version["customModelId"], custom_model_version_id=custom_model_version["id"])
         model_package = self._create_model_package_from_custom_model_version(
             custom_model_version["id"]
         )
@@ -1547,7 +1565,9 @@ class DrClient:
         dict,
             A DataRobot challenger.
         """
-
+        print(custom_model_version)
+        print("THE VERSION HERE")
+        self._intialize_prediction_explanations_for_model(custom_model_id=custom_model_version["customModelId"], custom_model_version_id=custom_model_version["id"])
         model_package = self._create_model_package_from_custom_model_version(
             custom_model_version["id"]
         )
